@@ -9,7 +9,7 @@ export function CountryInfo() {
 	// const [match] = useRoute("/");
 	const countryCode = location.slice(1);
 
-	const { isPending, error, data, isFetching } = useQuery({
+	const { error, data, isFetching } = useQuery({
 		queryKey: ["country", countryCode],
 		queryFn: async () => {
 			const response = await fetch(

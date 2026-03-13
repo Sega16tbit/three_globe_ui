@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { mount } from "./3d";
 import "./index.css";
 
-export default function Cube() {
+export default function Globe() {
 	const containerRef = useCallback(mount, []);
-	return <div className="Cube-container" ref={containerRef}></div>;
+	return <div className="Globe-container" ref={containerRef}></div>;
 }

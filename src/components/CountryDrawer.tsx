@@ -17,7 +17,7 @@ type Props = {
 };
 
 export function CountryDrawer({ children }: Props) {
-	const [location, navigate] = useLocation();
+	const [, navigate] = useLocation();
 	const [match] = useRoute("/.+");
 	// const regex = /^\/.+/;
 

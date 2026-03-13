@@ -11,7 +11,6 @@ import {
 	Timer,
 	Object3D,
 	type Object3DEventMap,
-	BoxGeometry,
 	Raycaster,
 	Vector2,
 } from "three";
@@ -27,7 +26,6 @@ let camera: PerspectiveCamera,
 	clock: Timer,
 	group: Object3D<Object3DEventMap>;
 
-let geometry, material, mesh;
 let globeBase: Mesh;
 
 const countryMeshes = new Map<string, Mesh>();
@@ -51,22 +49,12 @@ function init() {
 	// scene
 	scene = new Scene();
 
-	////////
-	geometry = new BoxGeometry(0.2, 0.2, 0.2);
-	// material = new MeshNormalMaterial();
-
-	mesh = new Mesh(geometry, material);
-	scene.add(mesh);
-	///////////
-
 	// renderer
-	// renderer = new WebGLRenderer({ antialias: true });
 	renderer = new WebGPURenderer({ antialias: true });
 	renderer.setAnimationLoop(animate);
 	document.body.appendChild(renderer.domElement);
 
 	renderer.domElement.addEventListener("click", onClick);
-	// window.addEventListener("popstate", handleRouteChange);
 
 	// controls
 	clock = new Timer();
@@ -81,23 +69,16 @@ function init() {
 
 	// load geojson
 	const url = new URL("/world.geojson", import.meta.url);
-	new GeoJSONLoader().loadAsync(url).then((res) => {
-		const queryParams = new URLSearchParams(location.search);
-		let thickness = parseFloat(queryParams.get("thickness"));
-		let resolution = parseFloat(queryParams.get("resolution")) || 2.5;
-		let wireframe = Boolean(queryParams.get("wireframe"));
-		if (thickness !== 0) {
-			thickness = thickness || 1e4;
-		}
+	new GeoJSONLoader().loadAsync(url).then((res: { polygons: any[] }) => {
+		let thickness = 1e4;
+		let resolution = 2.5;
+		let wireframe = false;
 
 		globeBase = new Mesh(
 			new SphereGeometry(1, 100, 50),
 			new MeshBasicMaterial({
 				color: 0x222222,
 				depthWrite: true,
-				// 		color: 0x222222,
-				// 		transparent: false,
-				// 		depthWrite: true,
 				// 		polygonOffset: true,
 				// 		polygonOffsetFactor: 1,
 				// 		polygonOffsetUnits: 1,
@@ -227,17 +208,17 @@ function handleRouteChange() {
 	const iso = location.pathname.replace("/", "");
 	// reset all
 	countryMeshes.forEach((mesh) => {
-		mesh.material.opacity = 0;
+		(mesh.material as MeshBasicMaterial).opacity = 0;
 	});
 
 	if (iso === "") return;
 	const mesh = countryMeshes.get(iso);
 	if (mesh) {
-		mesh.material.opacity = 1;
+		(mesh.material as MeshBasicMaterial).opacity = 1;
 	}
 }
 
-export function mount(container) {
+export function mount(container: HTMLDivElement | null) {
 	if (container) {
 		container.insertBefore(renderer.domElement, container.firstChild);
 		onResize();
