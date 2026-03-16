@@ -28,10 +28,11 @@ function DrawerOverlay({
 	return (
 		<DrawerPrimitive.Overlay
 			data-slot="drawer-overlay"
-			className={cn(
-				"fixed inset-0 z-50 bg-black/80 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
-				className
-			)}
+			// className={cn(
+			// 	"fixed inset-0 z-50 bg-black/80 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+			// 	className
+			// )}
+			className={cn("fixed inset-0 z-50", className)}
 			{...props}
 		/>
 	);
@@ -44,7 +45,7 @@ function DrawerContent({
 }: React.ComponentProps<typeof DrawerPrimitive.Content>) {
 	return (
 		<DrawerPortal data-slot="drawer-portal">
-			{/* <DrawerOverlay /> */}
+			<DrawerOverlay />
 			<DrawerPrimitive.Content
 				data-slot="drawer-content"
 				className={cn(
