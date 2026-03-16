@@ -150,6 +150,7 @@ function init() {
 			u_cameraProjectionMatrixInverse: { value: new Matrix4() },
 			u_orthoHalfHeight: { value: 1 },
 			u_orthoHalfWidth: { value: 1 },
+			u_lightPos: { value: new Vector3(1, 2, 3) },
 		},
 		vertexShader: GLSL.vertex,
 		fragmentShader: GLSL.fragment,

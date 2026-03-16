@@ -12,8 +12,8 @@ uniform float u_orthoHalfHeight;
 uniform float u_orthoHalfWidth;
 uniform mat4 u_modelMatrix;
 uniform mat4 u_inverseModelMatrix;
+uniform vec3 u_lightPos;
 varying vec3 vWorldPos;
-vec3 u_lightPos = vec3(1., 2., 3.);
 
 #define MAX_STEPS 100
 #define MAX_DIST 100.0
