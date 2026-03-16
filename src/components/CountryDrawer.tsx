@@ -3,11 +3,11 @@ import {
 	Drawer,
 	DrawerClose,
 	DrawerContent,
-	// DrawerDescription,
+	DrawerDescription,
 	DrawerFooter,
-	// DrawerHeader,
-	// DrawerTitle,
-	// DrawerTrigger,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerTrigger,
 } from "@/components/ui/drawer";
 import type { ReactNode } from "react";
 import { useLocation, useRoute } from "wouter";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 export function CountryDrawer({ children }: Props) {
-	const [, navigate] = useLocation();
+	const [location, navigate] = useLocation();
 	const [match] = useRoute("/.+");
 	// const regex = /^\/.+/;
 
@@ -28,10 +28,10 @@ export function CountryDrawer({ children }: Props) {
 			// open={regex.test(location)}
 			onOpenChange={(value) => (value ? null : navigate(`/`))}
 		>
-			<DrawerContent className="max-w-md mx-auto sm:mb-10 sm:p-2 sm:before:inset-0">
-				{/* <DrawerHeader>
+			<DrawerContent className="mx-auto max-w-md sm:mb-10 sm:p-2 sm:before:inset-0">
+				<DrawerHeader className="sr-only">
 					<DrawerTitle>{location}</DrawerTitle>
-				</DrawerHeader> */}
+				</DrawerHeader>
 				<div className="no-scrollbar overflow-y-auto px-4">{children}</div>
 				<DrawerFooter>
 					<DrawerClose asChild>
