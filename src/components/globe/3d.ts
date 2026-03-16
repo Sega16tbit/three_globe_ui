@@ -16,9 +16,13 @@ import {
 	Sphere,
 	PlaneGeometry,
 	MathUtils,
+	Matrix4,
+	ShaderMaterial,
+	TextureLoader,
 	DoubleSide,
 } from "three";
 import * as THREE from "three";
+import * as GLSL from "./glsl/index.ts";
 import CameraControls from "camera-controls";
 import { GeoJSONLoader } from "@/lib/three-geojson";
 import { WGS84_ELLIPSOID } from "3d-tiles-renderer";
@@ -38,6 +42,7 @@ let scene: Scene,
 	group: Object3D<Object3DEventMap>,
 	cameraControls: CameraControls,
 	globeBase: Mesh,
+	shaderMaterial: ShaderMaterial,
 	rendererSize: Vector2;
 
 const countryMeshes = new Map<string, Mesh>();
@@ -124,6 +129,32 @@ function init() {
 		cameraControls.dollySpeed = NON_TOUCH_SPEED;
 	});
 
+	// shader
+	// const texColor = new TextureLoader().load("/NE2_50M_SR.jpg");
+	const texColor = new TextureLoader().load("/HYP_50M_SR_W_DS.jpg");
+	const texHight = new TextureLoader().load("/gebco_08_rev_elev_5400x2700.jpg");
+
+	shaderMaterial = new ShaderMaterial({
+		uniforms: {
+			u_time: { value: 1.0 },
+			u_resolution: { value: rendererSize },
+			u_mouse: { value: new Vector2() },
+			u_heightTex: { value: texHight },
+			u_colorTex: { value: texColor },
+			u_radius: { value: 1 },
+			u_dispStrength: { value: 0.01 },
+			u_cameraZoom: { value: 1.0 },
+			u_modelMatrix: { value: new Matrix4() },
+			u_inverseModelMatrix: { value: new Matrix4() },
+			u_cameraWorldMatrix: { value: new Matrix4() },
+			u_cameraProjectionMatrixInverse: { value: new Matrix4() },
+			u_orthoHalfHeight: { value: 1 },
+			u_orthoHalfWidth: { value: 1 },
+		},
+		vertexShader: GLSL.vertex,
+		fragmentShader: GLSL.fragment,
+	});
+
 	// construct geo group
 	group = new Group();
 	group.rotation.x = -Math.PI / 2;
@@ -148,10 +179,16 @@ function init() {
 					// 		polygonOffsetUnits: 1,
 				})
 			);
+			globeBase.material = shaderMaterial;
 
 			globeBase.scale.copy(WGS84_ELLIPSOID.radius);
 			globeBase.renderOrder = 1;
 			group.add(globeBase);
+
+			shaderMaterial.uniforms.u_modelMatrix.value = globeBase.matrixWorld;
+			shaderMaterial.uniforms.u_inverseModelMatrix.value = globeBase.matrixWorld
+				.clone()
+				.invert();
 
 			const wireframeGroup = new Group();
 			wireframeGroup.visible = wireframe;
@@ -249,6 +286,25 @@ function animate() {
 	const delta = clock.getDelta();
 	const elapsed = clock.getElapsedTime();
 	cameraControls.update(delta);
+
+	shaderMaterial.uniforms.u_time.value = elapsed;
+	shaderMaterial.uniforms.u_cameraWorldMatrix.value.copy(camera.matrixWorld);
+	shaderMaterial.uniforms.u_cameraProjectionMatrixInverse.value.copy(
+		camera.projectionMatrixInverse
+	);
+	shaderMaterial.uniforms.u_cameraZoom.value = camera.zoom;
+	shaderMaterial.uniforms.u_orthoHalfHeight.value =
+		((camera.top - camera.bottom) * 0.5) / camera.zoom;
+	shaderMaterial.uniforms.u_orthoHalfWidth.value =
+		((camera.right - camera.left) * 0.5) / camera.zoom;
+
+	if (globeBase) {
+		globeBase.updateMatrixWorld();
+		shaderMaterial.uniforms.u_modelMatrix.value.copy(globeBase.matrixWorld);
+		shaderMaterial.uniforms.u_inverseModelMatrix.value.copy(
+			globeBase.matrixWorld.clone().invert()
+		);
+	}
 
 	group.rotation.z = window.performance.now() * 1e-4;
 
