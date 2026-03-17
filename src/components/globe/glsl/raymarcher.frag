@@ -12,8 +12,8 @@ uniform float u_orthoHalfHeight;
 uniform float u_orthoHalfWidth;
 uniform mat4 u_modelMatrix;
 uniform mat4 u_inverseModelMatrix;
-uniform vec3 u_lightPos;
 varying vec3 vWorldPos;
+uniform vec3 u_lightPos;
 
 #define MAX_STEPS 100
 #define MAX_DIST 100.0
@@ -29,7 +29,7 @@ vec2 sphereUV(vec3 p) {
   float v = 0.5 - asin(n.z) / PI;             // lat
   // texture flip and horizontal rotation
   v = 1.0 - v;
-  u = fract(u + 0.0);
+  // u = fract(u + 0.0);
   return vec2(u, v);
 }
 
@@ -100,7 +100,7 @@ void main() {
     vec3 lightDir = normalize(lightPosObj - p);
 
     float diff = clamp(dot(n, lightDir), 0.0, 1.0);
-    float ambient = 0.15;
+    float ambient = 0.08;
 
     vec3 tex = sphereColor(p);
     col = tex * (diff + ambient);

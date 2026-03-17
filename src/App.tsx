@@ -1,4 +1,4 @@
-import Globe from "./components/globe/Globe";
+import Canvas from "./components/globe/Canvas";
 import { CountryDrawer } from "./components/CountryDrawer";
 import { CountryListWithSearch } from "./components/CountryListWithSearch";
 import { CountryInfo } from "./components/CountryInfo";
@@ -8,10 +8,10 @@ const countryQueryClient = new QueryClient();
 
 export function App() {
 	return (
-		<>
-			<div className="fixed w-lvw h-lvh ">
-				<Globe />
-			</div>
+		<div className="m-0 h-full w-full touch-none overflow-hidden overscroll-none bg-black p-0">
+			{/* <div className="fixed h-lvh w-lvw"> */}
+			<Canvas />
+			{/* </div> */}
 
 			<CountryDrawer>
 				<QueryClientProvider client={countryQueryClient}>
@@ -19,8 +19,8 @@ export function App() {
 				</QueryClientProvider>
 			</CountryDrawer>
 
-			<div className=" fixed sm:bottom-1/4 bottom-2  w-full  ">
-				<div className="max-w-md mx-auto px-2">
+			<div className="fixed bottom-2 w-full sm:bottom-1/4">
+				<div className="mx-auto max-w-md px-2">
 					<CountryListWithSearch />
 				</div>
 			</div>
@@ -37,7 +37,7 @@ export function App() {
 				</div>
 			</div> */
 			}
-		</>
+		</div>
 	);
 }
 
