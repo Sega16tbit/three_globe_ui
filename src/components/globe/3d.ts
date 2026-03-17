@@ -5,14 +5,11 @@ import {
 	Vector2,
 	Vector3,
 	Mesh,
-	MeshBasicMaterial,
 	Clock,
 	Raycaster,
 	OrthographicCamera,
 	Sphere,
-	PlaneGeometry,
 	ShaderMaterial,
-	DoubleSide,
 	Material,
 	Group,
 } from "three";
@@ -24,10 +21,10 @@ import { Globe } from "./modules/Globe.ts";
 
 CameraControls.install({ THREE });
 
-const POLAR_ROTATE_SPEED = 0.5;
-const AZIMUTH_ROTATE_SPEED = 0.5;
-const TOUCH_SPEED = 6;
-const NON_TOUCH_SPEED = 1;
+// const POLAR_ROTATE_SPEED = 0.5;
+// const AZIMUTH_ROTATE_SPEED = 0.5;
+// const TOUCH_SPEED = 6;
+// const NON_TOUCH_SPEED = 1;
 
 let scene: Scene,
 	camera: OrthographicCamera,
@@ -41,34 +38,6 @@ let scene: Scene,
 let hoveredMesh: Mesh | null = null;
 const raycaster = new Raycaster();
 const pointer = new Vector2();
-
-const rect1 = new Mesh(
-	new PlaneGeometry(2, 1),
-	new MeshBasicMaterial({
-		color: 0xff0000,
-		transparent: true,
-		opacity: 0.3,
-		side: DoubleSide,
-	})
-);
-const rect2 = new Mesh(
-	new PlaneGeometry(2, 1),
-	new MeshBasicMaterial({
-		color: 0x00ff00,
-		transparent: true,
-		opacity: 0.3,
-		side: DoubleSide,
-	})
-);
-const rect3 = new Mesh(
-	new PlaneGeometry(2, 1),
-	new MeshBasicMaterial({
-		color: 0x0000ff,
-		transparent: true,
-		opacity: 0.3,
-		side: DoubleSide,
-	})
-);
 
 init();
 
@@ -95,7 +64,7 @@ function init() {
 	const pivot = new Group();
 	pivot.add(globe);
 
-	presentationControls = new PresentationControls(pivot, camera, renderer.domElement, {
+	presentationControls = new PresentationControls(pivot, renderer.domElement, {
 		speed: 1.2,
 		damping: 0.08,
 	});
@@ -124,10 +93,10 @@ function configureRouting() {
 	handleRouteChange();
 }
 
-function shortestAzimuth(target: number, current: number) {
-	let delta = target - current;
-	return current + ((delta + Math.PI) % (Math.PI * 2)) - Math.PI;
-}
+// function shortestAzimuth(target: number, current: number) {
+// 	let delta = target - current;
+// 	return current + ((delta + Math.PI) % (Math.PI * 2)) - Math.PI;
+// }
 
 function animate() {
 	const delta = clock.getDelta();

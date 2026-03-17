@@ -3,11 +3,11 @@ import {
 	Drawer,
 	DrawerClose,
 	DrawerContent,
-	DrawerDescription,
+	// DrawerDescription,
 	DrawerFooter,
 	DrawerHeader,
 	DrawerTitle,
-	DrawerTrigger,
+	// DrawerTrigger,
 } from "@/components/ui/drawer";
 import type { ReactNode } from "react";
 import { useLocation, useRoute } from "wouter";

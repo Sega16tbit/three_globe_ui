@@ -1,4 +1,4 @@
-import { Object3D, Vector2, Vector3, Quaternion, Camera, MathUtils } from "three";
+import { Object3D, Vector2, Vector3, Quaternion, MathUtils } from "three";
 
 const _meshToGlobeDir = new Vector3();
 const _targetDir = new Vector3();
@@ -12,7 +12,7 @@ type Options = {
 
 export class PresentationControls {
 	private object: Object3D;
-	private camera: Camera;
+	// private camera: Camera;
 	private domElement: HTMLElement;
 
 	private enabled: boolean;
@@ -40,12 +40,12 @@ export class PresentationControls {
 
 	constructor(
 		object: Object3D,
-		camera: Camera,
+		// camera: Camera,
 		domElement: HTMLElement,
 		options: Options = {}
 	) {
 		this.object = object;
-		this.camera = camera;
+		// this.camera = camera;
 		this.domElement = domElement;
 
 		this.enabled = options.enabled ?? true;

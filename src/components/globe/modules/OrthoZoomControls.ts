@@ -38,7 +38,7 @@ export class OrthoZoomControls {
 	private lastPinchDist = 0;
 
 	private animating = false;
-	private targetFract: number | null = null;
+	// private targetFract: number | null = null;
 	private targetHeight: number;
 	private userInputOverride = false;
 	private lastInputType: "wheel" | "touch" | "fract" | null = null;
@@ -116,7 +116,7 @@ export class OrthoZoomControls {
 		);
 		this.lastInputType = "wheel";
 
-		if (this.animating && this.userInputOverride) this.targetFract = null;
+		// if (this.animating && this.userInputOverride) this.targetFract = null;
 	};
 
 	private onPointerDown = (e: PointerEvent) => {
@@ -147,7 +147,7 @@ export class OrthoZoomControls {
 					)
 				);
 				this.lastInputType = "touch";
-				if (this.animating && this.userInputOverride) this.targetFract = null;
+				// if (this.animating && this.userInputOverride) this.targetFract = null;
 			}
 			this.lastPinchDist = dist;
 		}
@@ -170,7 +170,7 @@ export class OrthoZoomControls {
 	zoomToFractInSetRange(fraction: number, opts: ZoomFractOptions = {}) {
 		fraction = Math.max(0, Math.min(1, fraction));
 		this.animating = true;
-		this.targetFract = fraction;
+		// this.targetFract = fraction;
 		this.userInputOverride = !opts.disableUserInput;
 		this.targetHeight = this.minScale + (this.maxScale - this.minScale) * fraction;
 		this.lastInputType = "fract";
@@ -197,7 +197,7 @@ export class OrthoZoomControls {
 
 			if (this.animating && Math.abs(newHeight - this.targetHeight) < 1e-3) {
 				this.animating = false;
-				this.targetFract = null;
+				// this.targetFract = null;
 				this.userInputOverride = false;
 				this.lastInputType = null;
 			}
