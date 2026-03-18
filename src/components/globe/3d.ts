@@ -12,9 +12,6 @@ import {
 	ShaderMaterial,
 	Material,
 	Group,
-	MeshBasicMaterial,
-	PlaneGeometry,
-	DoubleSide,
 } from "three";
 import * as THREE from "three";
 import CameraControls from "camera-controls";
@@ -23,35 +20,6 @@ import { OrthoZoomControls } from "./modules/OrthoZoomControls.ts";
 import { Globe } from "./modules/Globe.ts";
 
 CameraControls.install({ THREE });
-
-// Debug meshes (unused but kept intact)
-const rect1 = new Mesh(
-	new PlaneGeometry(2, 1),
-	new MeshBasicMaterial({
-		color: 0xff0000,
-		transparent: true,
-		opacity: 0.3,
-		side: DoubleSide,
-	})
-);
-const rect2 = new Mesh(
-	new PlaneGeometry(2, 1),
-	new MeshBasicMaterial({
-		color: 0x00ff00,
-		transparent: true,
-		opacity: 0.3,
-		side: DoubleSide,
-	})
-);
-const rect3 = new Mesh(
-	new PlaneGeometry(2, 1),
-	new MeshBasicMaterial({
-		color: 0x0000ff,
-		transparent: true,
-		opacity: 0.3,
-		side: DoubleSide,
-	})
-);
 
 // Core
 let scene: Scene;
