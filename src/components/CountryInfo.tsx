@@ -1,5 +1,5 @@
-import { Check, X } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+// import { Check, X } from "@hugeicons/core-free-icons";
+// import { HugeiconsIcon } from "@hugeicons/react";
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
