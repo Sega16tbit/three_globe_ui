@@ -3,6 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
+import { GiniCard } from "./GiniCard";
 
 export function CountryInfo() {
 	const [location] = useLocation();
@@ -27,16 +28,28 @@ export function CountryInfo() {
 	if (error) return "An error has occurred: " + error.message;
 
 	return (
-		<div>
-			{data[0].name && (
-				<p className=" text-5xl text-bold text-center my-10">
-					{data[0].name.common}
-				</p>
-			)}
-			<div className="mb-3">
-				{data[0].region && <p>Region: {data[0].region}</p>}
-				{data[0].subregion && <p>Subregion: {data[0].subregion}</p>}
-				{data[0].area && <p>Area: {data[0].area}</p>}
+		<article className="flex text-neutral-950 portrait:flex-col">
+			<header className="my-10">
+				{data[0].name && (
+					<h1 className="text-center text-5xl font-medium">
+						{data[0].name.common}
+					</h1>
+				)}
+				<div className="mx-auto mt-4 flex max-w-min rounded-full bg-neutral-300">
+					{data[0].region && (
+						<h2 className="rounded-full bg-neutral-200 px-4 py-1 text-xs text-nowrap">
+							{data[0].region}
+						</h2>
+					)}
+					{data[0].subregion && (
+						<h3 className="rounded-full bg-neutral-300 px-4 py-1 pl-2 text-xs text-nowrap">
+							{data[0].subregion}
+						</h3>
+					)}
+				</div>
+			</header>
+			<section className="mb-3">
+				{/* {data[0].area && <p>Area: {data[0].area}</p>}
 				{data[0].capital && <p>Capital: {data[0].capital}</p>}
 				{data[0].currencies && (
 					<p>Currencies: {Object.keys(data[0].currencies)}</p>
@@ -76,17 +89,16 @@ export function CountryInfo() {
 							/>
 						)}
 					</div>
-				)}
+				)} */}
 				{data[0].gini && (
-					<p>
-						Gini index:{" "}
+					<>
 						{(() => {
 							const [key, value] = Object.entries(data[0].gini)[0];
-							return `${value} (${key})`;
+							return <GiniCard index={value} year={key} />;
 						})()}
-					</p>
+					</>
 				)}
-			</div>
-		</div>
+			</section>
+		</article>
 	);
 }

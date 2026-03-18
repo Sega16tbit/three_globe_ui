@@ -35,7 +35,7 @@ export function CountryDrawer({ children }: Props) {
 				<div className="no-scrollbar overflow-y-auto px-4">{children}</div>
 				<DrawerFooter>
 					<DrawerClose asChild>
-						<Button variant="outline">Cancel</Button>
+						<Button variant="outline">Close</Button>
 					</DrawerClose>
 				</DrawerFooter>
 			</DrawerContent>
