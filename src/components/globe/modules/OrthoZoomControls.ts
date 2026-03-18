@@ -38,16 +38,17 @@ export class OrthoZoomControls {
 	private lastPinchDist = 0;
 
 	private animating = false;
-	// private targetFract: number | null = null;
 	private targetHeight: number;
 	private userInputOverride = false;
 	private lastInputType: "wheel" | "touch" | "fract" | null = null;
+
+	private savedFract: number | null = null;
 
 	constructor(camera: OrthographicCamera, domElement: HTMLElement, opts: Options = {}) {
 		this.camera = camera;
 		this.dom = domElement;
 
-		this.minScale = opts.minScale ?? 0.5;
+		this.minScale = opts.minScale ?? 0.65;
 		this.maxScale = opts.maxScale ?? 2;
 		this.wheelSpeed = opts.wheelSpeed ?? 0.002;
 		this.pinchSpeed = opts.pinchSpeed ?? 0.005;
@@ -60,6 +61,17 @@ export class OrthoZoomControls {
 		this.targetHeight = camera.top - camera.bottom;
 
 		this.bind();
+	}
+
+	saveState() {
+		const height = this.targetHeight;
+		const fract = (height - this.minScale) / (this.maxScale - this.minScale);
+		this.savedFract = Math.max(0, Math.min(1, fract));
+	}
+
+	reset(opts: ZoomFractOptions = {}) {
+		if (this.savedFract == null) return;
+		this.zoomToFractInSetRange(this.savedFract, opts);
 	}
 
 	dispose() {
@@ -115,8 +127,6 @@ export class OrthoZoomControls {
 			Math.min(this.maxScale, (this.camera.top - this.camera.bottom) * scale)
 		);
 		this.lastInputType = "wheel";
-
-		// if (this.animating && this.userInputOverride) this.targetFract = null;
 	};
 
 	private onPointerDown = (e: PointerEvent) => {
@@ -147,7 +157,6 @@ export class OrthoZoomControls {
 					)
 				);
 				this.lastInputType = "touch";
-				// if (this.animating && this.userInputOverride) this.targetFract = null;
 			}
 			this.lastPinchDist = dist;
 		}
@@ -170,7 +179,6 @@ export class OrthoZoomControls {
 	zoomToFractInSetRange(fraction: number, opts: ZoomFractOptions = {}) {
 		fraction = Math.max(0, Math.min(1, fraction));
 		this.animating = true;
-		// this.targetFract = fraction;
 		this.userInputOverride = !opts.disableUserInput;
 		this.targetHeight = this.minScale + (this.maxScale - this.minScale) * fraction;
 		this.lastInputType = "fract";
@@ -197,7 +205,6 @@ export class OrthoZoomControls {
 
 			if (this.animating && Math.abs(newHeight - this.targetHeight) < 1e-3) {
 				this.animating = false;
-				// this.targetFract = null;
 				this.userInputOverride = false;
 				this.lastInputType = null;
 			}
