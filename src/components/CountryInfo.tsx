@@ -28,8 +28,8 @@ export function CountryInfo() {
 	if (error) return "An error has occurred: " + error.message;
 
 	return (
-		<article className="flex text-neutral-950 portrait:flex-col">
-			<header className="my-10">
+		<article className="flex text-neutral-950 portrait:flex-col landscape:mt-6 landscape:gap-6">
+			<header className="my-10 landscape:mx-16 landscape:my-auto landscape:pb-4">
 				{data[0].name && (
 					<h1 className="text-center text-5xl font-medium">
 						{data[0].name.common}
@@ -48,7 +48,7 @@ export function CountryInfo() {
 					)}
 				</div>
 			</header>
-			<section className="mb-3">
+			<section className="--mb-3">
 				{/* {data[0].area && <p>Area: {data[0].area}</p>}
 				{data[0].capital && <p>Capital: {data[0].capital}</p>}
 				{data[0].currencies && (

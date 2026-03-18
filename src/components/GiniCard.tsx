@@ -44,11 +44,11 @@ export function GiniCard({ index, year }: Props) {
 	];
 
 	return (
-		<Card className="flex flex-col gap-0">
-			<CardContent className="items-centerpb-0 flex">
+		<Card className="mb-1 flex flex-col gap-0">
+			<CardContent className="flex items-center pb-0">
 				<ChartContainer
 					config={chartConfig}
-					className="m-auto mx-auto flex aspect-square w-full max-w-[160px] scale-120 items-start justify-center overflow-clip"
+					className="---w-full m-auto mx-auto flex aspect-square w-[160px] scale-120 items-start justify-center overflow-clip landscape:mx-16"
 				>
 					<RadialBarChart
 						data={chartData}
