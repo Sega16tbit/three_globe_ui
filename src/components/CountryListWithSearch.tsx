@@ -11,8 +11,13 @@ import {
 import { CountryListItem } from "./CountryListItem";
 import { countries } from "@/assets/data/countryLookups/countries";
 import { useLocation } from "wouter";
+import { cn } from "@/lib/utils";
 
-export function CountryListWithSearch() {
+type Props = {
+	classNameInput?: string;
+};
+
+export function CountryListWithSearch({ classNameInput }: Props) {
 	const [, navigate] = useLocation();
 
 	return (
@@ -22,17 +27,12 @@ export function CountryListWithSearch() {
 			onValueChange={(value) => navigate(value ? `/${value.code}` : `/`)}
 		>
 			<ComboboxInput
-				className={"w-full h-12 portrait:max-w-md bg-white"}
+				className={cn("h-12 w-full bg-white", classNameInput)}
 				placeholder="Search countries..."
 			/>
-			<ComboboxContent className={""} sideOffset={30}>
+			<ComboboxContent sideOffset={30}>
 				<ComboboxEmpty>No countries found.</ComboboxEmpty>
-				<ComboboxList
-				// for later
-				// className={
-				// 	"landscape:max-h-[calc(100vh-10rem)] sm:portrait:max-h-[calc(60vh-8rem)] portrait:max-h-[calc(60vh-6rem)]"
-				// }
-				>
+				<ComboboxList>
 					{(country) => (
 						<ComboboxItem key={country.code} value={country}>
 							<CountryListItem country={country} />

@@ -28,7 +28,7 @@ export function CountryDrawer({ children }: Props) {
 			// open={regex.test(location)}
 			onOpenChange={(value) => (value ? null : navigate(`/`))}
 		>
-			<DrawerContent className="mx-auto sm:mb-10 sm:p-2 sm:before:inset-0 portrait:max-w-md landscape:max-w-min">
+			<DrawerContent className="mx-auto max-w-md sm:mb-10 sm:p-2 sm:before:inset-0">
 				<DrawerHeader className="sr-only">
 					<DrawerTitle>{location}</DrawerTitle>
 				</DrawerHeader>

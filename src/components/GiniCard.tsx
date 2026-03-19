@@ -1,13 +1,9 @@
-"use client";
-
-// import { TrendingUp } from "lucide-react";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
 import {
 	Card,
 	CardContent,
 	CardDescription,
-	// CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -17,7 +13,7 @@ import {
 	ChartTooltipContent,
 	type ChartConfig,
 } from "@/components/ui/chart";
-import { renderValue } from "@/lib/utils";
+import { cn, renderValue } from "@/lib/utils";
 
 export const description = "A radial chart with stacked sections";
 
@@ -29,33 +25,57 @@ const chartConfig = {
 	inequality: {
 		label: "Inequality",
 		color: "#d4d4d4",
-		// color: "#a1a1a1",
 	},
 } satisfies ChartConfig;
 
 type Props = {
-	index: unknown;
-	year: unknown;
+	className?: string;
+	index?: unknown;
+	year?: unknown;
 };
 
-export function GiniCard({ index, year }: Props) {
-	const chartData = [
-		{ month: "january", equality: 100 - Number(index), inequality: index },
-	];
+export function GiniCard({ className, index, year }: Props) {
+	const gini = index ? Number(index) : 0;
+
+	const chartData = [{ month: "january", equality: 100 - gini, inequality: gini }];
 
 	return (
-		<Card className="mb-1 flex flex-col gap-0">
+		<Card
+			className={cn("flex flex-col gap-0", className)}
+			style={
+				{
+					"--gini": gini,
+					"--gini-min": 32,
+					"--gini-max": 50,
+
+					// normalized 0 → 1
+					"--t": "clamp(0, calc((var(--gini) - var(--gini-min)) / (var(--gini-max) - var(--gini-min))), 1)",
+
+					// easing (optional but nicer)
+					"--t-eased": "calc(var(--t) * var(--t))",
+
+					// hue: 120 (green) → 0 (red)
+					"--hue": "calc(120 - (120 * var(--t-eased)))",
+
+					// optional dynamics
+					"--sat": "calc(60% + 20% * var(--t))",
+					"--light": "calc(55% - 10% * var(--t))",
+
+					"--gini-color": "hsl(var(--hue), var(--sat), var(--light))",
+				} as React.CSSProperties
+			}
+		>
 			<CardContent className="flex items-center pb-0">
 				<ChartContainer
 					config={chartConfig}
-					className="---w-full m-auto mx-auto flex aspect-square w-[160px] scale-120 items-start justify-center overflow-clip landscape:mx-16"
+					className="m-auto mx-auto flex aspect-square w-40 scale-120 items-start justify-center overflow-clip"
 				>
 					<RadialBarChart
 						data={chartData}
 						endAngle={180}
 						innerRadius={65}
 						outerRadius={130}
-						className="--aspect-square mt-4"
+						className="mt-4"
 					>
 						<ChartTooltip
 							cursor={false}
@@ -107,10 +127,10 @@ export function GiniCard({ index, year }: Props) {
 						/>
 						<RadialBar
 							dataKey="inequality"
-							fill="var(--color-inequality)"
+							fill="var(--gini-color)"
 							stackId="a"
 							cornerRadius={5}
-							className="stroke-transparent stroke-2"
+							className="stroke-transparent stroke-2 transition-[fill] duration-300"
 						/>
 					</RadialBarChart>
 				</ChartContainer>
@@ -121,14 +141,6 @@ export function GiniCard({ index, year }: Props) {
 					year:{renderValue(year)}
 				</CardDescription>
 			</CardHeader>
-			{/* <CardFooter className="flex-col gap-2 text-sm">
-				<div className="flex items-center gap-2 leading-none font-medium">
-					Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-				</div>
-				<div className="leading-none text-muted-foreground">
-					Showing total visitors for the last 6 months
-				</div>
-			</CardFooter> */}
 		</Card>
 	);
 }
