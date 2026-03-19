@@ -12,6 +12,7 @@ import {
 	ShaderMaterial,
 	Material,
 	Group,
+	MathUtils,
 } from "three";
 import * as THREE from "three";
 import CameraControls from "camera-controls";
@@ -41,6 +42,8 @@ const pointer = new Vector2();
 
 // State
 let hasSavedState = false;
+let isDragging = false;
+let dragMoved = false;
 
 init();
 
@@ -66,12 +69,19 @@ function init() {
 	globe.onReady(configureRouting);
 
 	const pivot = new Group();
+	pivot.rotation.y = MathUtils.degToRad(90);
 	pivot.add(globe);
 	scene.add(pivot);
 
 	presentationControls = new PresentationControls(pivot, camera, renderer.domElement, {
 		speed: 1.2,
 		damping: 0.08,
+		onDragStart: () => {
+			dragMoved = false;
+		},
+		onDragEnd: (moved) => {
+			dragMoved = moved;
+		},
 	});
 
 	orthoZoomControls = new OrthoZoomControls(camera, renderer.domElement, {
@@ -166,6 +176,7 @@ function updatePointer(event: MouseEvent) {
 }
 
 function onHover(event: MouseEvent) {
+	if (isDragging) return;
 	updatePointer(event);
 	raycaster.setFromCamera(pointer, camera);
 
@@ -188,7 +199,6 @@ function onHover(event: MouseEvent) {
 		}
 	}
 
-	// do not override selected mesh on hover
 	if (selectedIso && nextMesh?.name === selectedIso) return;
 
 	if (hoveredMesh === nextMesh) return;
@@ -205,12 +215,13 @@ function onHover(event: MouseEvent) {
 }
 
 function onClick(event: MouseEvent) {
+	if (dragMoved) return;
+
 	updatePointer(event);
 	raycaster.setFromCamera(pointer, camera);
 
 	const globeHit = globe.baseMesh ? raycaster.intersectObject(globe.baseMesh) : [];
 
-	// click outside or no baseMesh → root
 	if (!globeHit.length) {
 		history.pushState({}, "", "/");
 		return;
@@ -220,7 +231,6 @@ function onClick(event: MouseEvent) {
 		Array.from(globe.iso2CountryMeshesMap.values())
 	);
 
-	// click baseMesh or miss country → root
 	if (!countryHits.length || countryHits[0].distance > globeHit[0].distance) {
 		history.pushState({}, "", "/");
 		return;
@@ -233,8 +243,9 @@ function onClick(event: MouseEvent) {
 function handleRouteChange() {
 	const iso = location.pathname.replace("/", "");
 
-	// RESET MODE
 	if (!iso) {
+		presentationControls.setEnabled(true);
+
 		globe.iso2CountryMeshesMap.forEach(
 			(mesh) => ((mesh.material as Material).opacity = 0)
 		);
@@ -252,7 +263,8 @@ function handleRouteChange() {
 		return;
 	}
 
-	// FOCUS MODE (single loop opacity control)
+	presentationControls.setEnabled(false);
+
 	const mesh = globe.iso2CountryMeshesMap.get(iso);
 	if (!mesh) return;
 
