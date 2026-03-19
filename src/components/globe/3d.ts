@@ -159,7 +159,6 @@ function onResize() {
 
 window.addEventListener("resize", onResize);
 onResize();
-
 function updatePointer(event: MouseEvent) {
 	const rect = renderer.domElement.getBoundingClientRect();
 	pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -169,6 +168,8 @@ function updatePointer(event: MouseEvent) {
 function onHover(event: MouseEvent) {
 	updatePointer(event);
 	raycaster.setFromCamera(pointer, camera);
+
+	const selectedIso = location.pathname.replace("/", "");
 
 	let nextMesh: Mesh | null = null;
 
@@ -187,10 +188,18 @@ function onHover(event: MouseEvent) {
 		}
 	}
 
+	// do not override selected mesh on hover
+	if (selectedIso && nextMesh?.name === selectedIso) return;
+
 	if (hoveredMesh === nextMesh) return;
 
-	if (hoveredMesh) (hoveredMesh.material as any).opacity = 0.0;
-	if (nextMesh) (nextMesh.material as any).opacity = 0.4;
+	if (hoveredMesh && hoveredMesh.name !== selectedIso) {
+		(hoveredMesh.material as any).opacity = 0.0;
+	}
+
+	if (nextMesh && nextMesh.name !== selectedIso) {
+		(nextMesh.material as any).opacity = 0.4;
+	}
 
 	hoveredMesh = nextMesh;
 }
@@ -201,13 +210,21 @@ function onClick(event: MouseEvent) {
 
 	const globeHit = globe.baseMesh ? raycaster.intersectObject(globe.baseMesh) : [];
 
-	if (!globeHit.length) return;
+	// click outside or no baseMesh → root
+	if (!globeHit.length) {
+		history.pushState({}, "", "/");
+		return;
+	}
 
 	const countryHits = raycaster.intersectObjects(
 		Array.from(globe.iso2CountryMeshesMap.values())
 	);
 
-	if (!countryHits.length || countryHits[0].distance > globeHit[0].distance) return;
+	// click baseMesh or miss country → root
+	if (!countryHits.length || countryHits[0].distance > globeHit[0].distance) {
+		history.pushState({}, "", "/");
+		return;
+	}
 
 	const mesh = countryHits[0].object as Mesh;
 	history.pushState({}, "", "/" + mesh.name);
@@ -235,11 +252,13 @@ function handleRouteChange() {
 		return;
 	}
 
-	// FOCUS MODE
+	// FOCUS MODE (single loop opacity control)
 	const mesh = globe.iso2CountryMeshesMap.get(iso);
 	if (!mesh) return;
 
-	(mesh.material as Material).opacity = 1;
+	globe.iso2CountryMeshesMap.forEach((m) => {
+		(m.material as Material).opacity = m === mesh ? 1 : 0;
+	});
 
 	if (!hasSavedState) {
 		cameraControls.saveState();
